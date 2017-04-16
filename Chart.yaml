@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Drone Helm chart for Kubernetes
+name: drone
+version: 0.1.0

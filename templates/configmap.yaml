@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "server.fullname" . }}
+  labels:
+    app: {{ template "server.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+data:
+  open: {{ .Values.server.config.open | quote }}
+  github: {{ .Values.server.config.github | quote }}
+  github-client: {{ .Values.server.config.githubClient | quote }}
+  github-skip-verify: {{ .Values.server.config.githubSkipVerify | quote }}
+  organizations: {{ .Values.server.config.organizations | quote }}
+  db-driver: {{ .Values.server.config.dbDriver | quote }}

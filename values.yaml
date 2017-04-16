@@ -1,0 +1,53 @@
+# Default values for drone.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+server:
+  hostname: drone.acme.com
+  config:
+    open: true
+    github: true
+    githubClient: github_client_id
+    githubSkipVerify: true
+    organizations: organization_name
+    dbSource: postgres://username:password@hostname:port/database?sslmode=disable
+    dbDriver: postgres
+  secret:
+    secret: base_secret_key
+    githubSecret: github_secret_key
+  replicaCount: 1
+  image:
+    repository: drone/drone
+    tag: '0.5'
+    pullPolicy: IfNotPresent
+  internalPort: 8000
+  service:
+    image:
+      repository: nginx
+      tag: 'latest'
+      pullPolicy: IfNotPresent
+    name: drone-server
+    type: LoadBalancer
+    externalPort: 80
+    internalPort: 80
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+worker:
+  replicaCount: 1
+  image:
+    repository: drone/drone
+    tag: '0.5'
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+

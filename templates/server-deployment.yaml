@@ -1,0 +1,79 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "server.fullname" . }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+spec:
+  replicas: {{ .Values.server.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "server.fullname" . }}
+    spec:
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: "{{ template "server.fullname" . }}-nginx"
+      containers:
+      - name: "nginx"
+        image: "{{ .Values.server.service.image.repository }}:{{ .Values.server.service.image.tag }}"
+        imagePullPolicy: {{ .Values.server.service.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.server.internalPort }}
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+      - name: "{{ .Chart.Name }}"
+        image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
+        imagePullPolicy: {{ .Values.server.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.server.internalPort }}
+        env:
+        - name: DRONE_OPEN
+          valueFrom:
+            configMapKeyRef:
+              name: {{ template "server.fullname" . }}
+              key: open
+        - name: DRONE_ORGS
+          valueFrom:
+            configMapKeyRef:
+              name: {{ template "server.fullname" . }}
+              key: organizations
+        - name: DRONE_GITHUB
+          valueFrom:
+            configMapKeyRef:
+              name: {{ template "server.fullname" . }}
+              key: github
+        - name: DRONE_GITHUB_CLIENT
+          valueFrom:
+            configMapKeyRef:
+              name: {{ template "server.fullname" . }}
+              key: github-client
+        - name: DRONE_GITHUB_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "server.fullname" . }}
+              key: github-secret
+        - name: DRONE_GITHUB_SKIP_VERIFY
+          valueFrom:
+            configMapKeyRef:
+              name: {{ template "server.fullname" . }}
+              key: github-skip-verify
+        - name: DRONE_DATABASE_DRIVER
+          valueFrom:
+            configMapKeyRef:
+              name: {{ template "server.fullname" . }}
+              key: db-driver
+        - name: DRONE_DATABASE_DATASOURCE
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "server.fullname" . }}
+              key: db-source
+        - name: DRONE_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "server.fullname" . }}
+              key: secret
+        resources:
+{{ toYaml .Values.server.resources | indent 12 }}
