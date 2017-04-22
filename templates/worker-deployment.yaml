@@ -23,7 +23,7 @@ spec:
           mountPath: /var/run/docker.sock
         env:
         - name: DRONE_SERVER
-          value: "ws://{{ template "server.fullname" . }}:{{ .Values.server.service.internalPort }}/ws/broker"
+          value: "ws://{{ template "server.fullname" . }}:{{ .Values.server.internalPort }}/ws/broker"
         - name: DRONE_SECRET
           valueFrom:
             secretKeyRef:
