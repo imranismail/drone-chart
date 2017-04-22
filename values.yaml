@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 server:
-  hostname: drone.acme.com
+  host: drone.acme.com
   config:
     open: true
     github: true
@@ -20,22 +20,14 @@ server:
     tag: '0.5'
     pullPolicy: IfNotPresent
   internalPort: 8000
-  service:
-    image:
-      repository: nginx
-      tag: 'latest'
-      pullPolicy: IfNotPresent
-    name: drone-server
-    type: LoadBalancer
-    externalPort: 80
-    internalPort: 80
+  externalPort: 80
   resources:
     limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 50m
+      memory: 64Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 50m
+      memory: 64Mi
 
 worker:
   replicaCount: 1

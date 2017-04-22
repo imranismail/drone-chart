@@ -5,11 +5,10 @@ metadata:
   labels:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
 spec:
-  type: {{ .Values.server.service.type }}
-  ports:
-  - port: {{ .Values.server.service.externalPort }}
-    targetPort: {{ .Values.server.service.internalPort }}
-    protocol: TCP
-    name: {{ .Values.server.service.name }}
   selector:
     app: {{ template "server.fullname" . }}
+  ports:
+  - protocol: TCP
+    port: {{ .Values.server.externalPort }}
+    targetPort: {{ .Values.server.internalPort }}
+    name: http

@@ -11,19 +11,7 @@ spec:
       labels:
         app: {{ template "server.fullname" . }}
     spec:
-      volumes:
-      - name: nginx-config
-        configMap:
-          name: "{{ template "server.fullname" . }}-nginx"
       containers:
-      - name: "nginx"
-        image: "{{ .Values.server.service.image.repository }}:{{ .Values.server.service.image.tag }}"
-        imagePullPolicy: {{ .Values.server.service.image.pullPolicy }}
-        ports:
-        - containerPort: {{ .Values.server.internalPort }}
-        volumeMounts:
-        - name: nginx-config
-          mountPath: /etc/nginx/conf.d
       - name: "{{ .Chart.Name }}"
         image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag }}"
         imagePullPolicy: {{ .Values.server.image.pullPolicy }}
