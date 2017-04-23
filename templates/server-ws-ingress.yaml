@@ -1,17 +1,17 @@
   apiVersion: extensions/v1beta1
   kind: Ingress
   metadata:
-    name: "{{ template "server.fullname" . }}"
+    name: "{{ template "server.fullname" . }}-ws"
     labels:
       chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     annotations:
-      kubernetes.io/ingress.class: nginx
+      nginx.org/websocket-services: ws-svc
   spec:
     rules:
     - host: {{ .Values.server.host }}
       http:
         paths:
-        - path: /
+        - path: /ws
           backend:
             serviceName: {{ template "server.fullname" . }}
             servicePort: 80
