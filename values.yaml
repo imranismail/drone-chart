@@ -1,45 +1,62 @@
-# Default values for drone.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+image:
+  registry: docker.io
+  org: drone
+  name: drone
+  tag: 0.7
+  pullPolicy: IfNotPresent
+
+service:
+  http:
+    externalPort: 80
+    internalPort: 8000
+  type: ClusterIP
+
+ingress:
+  enabled: false
+  # enable TLS via kube-lego
+  tls: false
+  hostname: drone.example.com
+  # annotations:
+  #   kubernetes.io/ingress.class: nginx
+
 server:
-  host: drone.acme.com
-  config:
-    open: true
-    github: true
-    githubClient: github_client_id
-    githubSkipVerify: true
-    organizations: organization_name
-    dbSource: postgres://username:password@hostname:port/database?sslmode=disable
-    dbDriver: postgres
-  secret:
-    secret: base_secret_key
-    githubSecret: github_secret_key
-  replicaCount: 1
-  image:
-    repository: drone/drone
-    tag: '0.5'
-    pullPolicy: IfNotPresent
-  internalPort: 8000
-  externalPort: 80
+  # Drone server configuration. Values in here get injected as environment variables.
+  # See http://readme.drone.io/admin/installation-reference#server-options for a list of possible values.
+  env:
+    DRONE_DEBUG: "false"
+    DRONE_DATABASE_DRIVER: "sqlite"
+    DRONE_DATABASE_DATASOURCE: "drone.sqlite"
+    # Drone requires some environment variables to bootstrap the git service or it won't start up.
+    # Uncomment this and add your own custom configuration.
+    #
+    # See http://readme.drone.io/admin/installation-reference/ for more info on these envvars.
+    # DRONE_ADMIN: "username1,username2"
+    # DRONE_OPEN: "true"
+    # DRONE_GITHUB: "true"
+    # DRONE_ORGS: "organization1,organization2"
+    # DRONE_GITHUB_CLIENT: "github_client_id"
+    # DRONE_GITHUB_SECRET: "github_client_secret"
   resources:
-    limits:
-      cpu: 50m
-      memory: 64Mi
     requests:
-      cpu: 50m
-      memory: 64Mi
+      memory: 32Mi
+      cpu: 40m
+    limits:
+      memory: 1Gi
+      cpu: 1
 
-worker:
-  replicaCount: 1
-  image:
-    repository: drone/drone
-    tag: '0.5'
-    pullPolicy: IfNotPresent
+agent:
+  # Drone agent configuration. Values in here get injected as environment variables.
+  # See http://readme.drone.io/admin/installation-reference#server-options for a list of possible values.
+  env:
+    DRONE_DEBUG: "false"
   resources:
-    limits:
-      cpu: 100m
-      memory: 128Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      memory: 32Mi
+      cpu: 40m
+    limits:
+      memory: 1Gi
+      cpu: 1
 
+# Uncomment this if you want to set a specific shared secret between
+# the agents and servers, otherwise this will be auto-generated.
+#shared_secret: supersecret
